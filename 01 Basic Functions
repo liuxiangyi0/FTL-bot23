@@ -1,0 +1,75 @@
+def StandardMode_to_CountingMode(standard_list):
+    counted_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    for i in range(13):
+        counted_list[i] = sum([(1 if 4*i+j in standard_list else 0) for j in range(4)])
+    if 52 in standard_list: counted_list[-2] = 1
+    if 53 in standard_list: counted_list[-1] = 1
+    return counted_list
+
+def king_analyse(counted_list):
+    return counted_list[13:]
+
+def bomb_analyse(counted_list):
+    count = 0
+    bomb_list = []
+
+    if king_analyse(counted_list) == [1, 1]:
+        count += 1
+        bomb_list.append('rocket')
+    for j in range(13):
+        if counted_list[j] == 4:
+            count += 1
+            bomb_list.append(j)
+
+    if count == 0: return [0]
+    else: return [count, bomb_list]
+
+def aeroplane_analyse(counted_list):
+    for j in range(12):
+        if counted_list[j] == 4 and counted_list[j+1] == 4:
+            return 1
+    return 0
+
+def plane_analyse(counted_list):
+    count = 0
+    j = 0
+    plane_set = set()
+    while j < 11:
+        if counted_list[j] >= 3 and counted_list[j+1] >= 3:
+            count += 1
+            plane_set.add(j)
+            plane_set.add(j+1)
+        j += 1
+    plane_list = list(plane_set)
+    plane_list.sort()
+    if count == 0: return [0]
+    return [1, plane_list]
+
+def dragon_analyse(counted_list):
+    pass
+
+def double_dragon_analyse(counted_list):
+    pass
+
+def triplet_analyse(counted_list):
+    pass
+
+def pair_analyse(counted_list):
+    pass
+
+def single_analyse(counted_list):
+    single_list = []
+    if counted_list[13] == 1: single_list.append(13)
+    if counted_list[14] == 1: single_list.append(14)
+    have_set = set(j for j in range(13) if counted_list[j] >= 1)
+    one_set = set(j for j in range(13) if counted_list[j] == 1)
+    #print('Debugging have_set:',have_set)
+    for j in one_set:
+        lst = [{j-4+k, j-3+k, j-2+k, j-1+k, j+k}.issubset(have_set) for k in range(5)]
+        if True not in lst:
+            single_list.append(j)
+    single_list.sort()
+    return single_list
+
+def check_type(standard_list):
+    pass
