@@ -1,0 +1,95 @@
+def Able_To_Control(my_list, enemy_list):
+    '''mylist是countingMode，enemylist是standardMode'''
+    Type = check_type(enemy_list)
+    counted_enemy_list = StandardMode_to_CountingMode(enemy_list)
+    bomb_num = bomb_analyse(my_list)[0]
+    if Type == 1: # 单
+        c = counted_enemy_list.index(1)
+        normal_ability = 0
+        normal_control_list = []
+        for j in range(c+1, 15):
+            if my_list[j] > 0:
+                normal_ability = 1
+                normal_control_list.append([(0 if i != j else 1) for i in range(15)])
+        if bomb_num == 0 and normal_ability == 0:
+            return [0,[],[]]
+        if bomb_num == 0 and normal_ability == 1:
+            return [1, normal_control_list, []]
+        if bomb_num > 0 and normal_ability == 0:
+            return [1, [], bomb_analyse(my_list)[1]]
+        if bomb_num > 0 and normal_ability == 1:
+            return [1, normal_control_list, bomb_analyse(my_list)[1]]
+
+    if Type == 2: # 对
+        c = counted_enemy_list.index(2)
+        normal_ability = 0
+        normal_control_list = []
+        for j in range(c+1, 15):
+            if my_list[j] > 1:
+                normal_ability = 1
+                normal_control_list.append([(0 if i != j else 2) for i in range(15)])
+        if bomb_num == 0 and normal_ability == 0:
+            return [0,[],[]]
+        if bomb_num == 0 and normal_ability == 1:
+            return [1, normal_control_list, []]
+        if bomb_num > 0 and normal_ability == 0:
+            return [1, [], bomb_analyse(my_list)[1]]
+        if bomb_num > 0 and normal_ability == 1:
+            return [1, normal_control_list, bomb_analyse(my_list)[1]]
+
+    if Type == 17: # 王炸
+        return [0,[],[]]
+
+    if Type == 6: # 炸弹
+        c = counted_enemy_list.index(4)
+        if bomb_num == 0:
+            return [0, [], []]
+        if bomb_num >= 1:
+            bomb_list = [x for x in bomb_analyse(my_list)[1] if x > c]
+            if bomb_list != []:
+                return [1, [], bomb_list]
+            return [0, [], []]
+
+    if Type == 9: # 龙
+        dragon_length = sum(counted_enemy_list)
+        dragon_head = counted_enemy_list.index(1)
+        normal_ability = 0
+        normal_control_list = []
+        for j in range(dragon_head+1, 12-dragon_length):
+            count = 0
+            for i in range(dragon_length):
+                if my_list[j+i] >= 1:
+                    count += 1
+            if count == dragon_length:
+                normal_control_list.append([(1 if k in range(j,j+dragon_length) else 0) for k in range(15)])
+                normal_ability = 1
+        if bomb_num == 0 and normal_ability == 0:
+            return [0,[],[]]
+        if bomb_num == 0 and normal_ability == 1:
+            return [1, normal_control_list, []]
+        if bomb_num > 0 and normal_ability == 0:
+            return [1, [], bomb_analyse(my_list)[1]]
+        if bomb_num > 0 and normal_ability == 1:
+            return [1, normal_control_list, bomb_analyse(my_list)[1]]
+
+    if Type == 10: # 连对
+        double_dragon_length = counted_enemy_list.count(2)
+        double_dragon_head = counted_enemy_list.index(2)
+        normal_ability = 0
+        normal_control_list = []
+        for j in range(double_dragon_head+1, 12-double_dragon_length):
+            count = 0
+            for i in range(double_dragon_length):
+                if my_list[j+i] >= 2:
+                    count += 1
+            if count == double_dragon_length:
+                normal_control_list.append([(2 if k in range(j,j+double_dragon_length) else 0) for k in range(15)])
+                normal_ability = 1
+        if bomb_num == 0 and normal_ability == 0:
+            return [0,[],[]]
+        if bomb_num == 0 and normal_ability == 1:
+            return [1, normal_control_list, []]
+        if bomb_num > 0 and normal_ability == 0:
+            return [1, [], bomb_analyse(my_list)[1]]
+        if bomb_num > 0 and normal_ability == 1:
+            return [1, normal_control_list, bomb_analyse(my_list)[1]]
